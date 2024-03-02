@@ -1,0 +1,14 @@
+.icons{
+    display: flex;
+}
+
+i{
+    margin: 0.5rem;
+    font-size: 1.5rem;
+    height: 1.5rem;
+}
+
+i:hover{
+    cursor: pointer;
+    background-color: #7bf3ef;
+}

@@ -1,0 +1,10 @@
+{
+    "manifest_version": 1,
+    "name": "TruRand",
+    "description": "An extension which helps you to self-generate true random numbers (TRNGs) using the coordinates of your mouse cursor on the screen",
+    "version": "1.0",
+    "action": {
+      "default_popup": "default_popup.html",
+      "default_icon": "icon.png"
+    }
+  }
