@@ -1,75 +1,35 @@
 const start = document.querySelector('.fa-g');
 const stop = document.querySelector('.fa-circle-stop');
 const downloadbtn = document.querySelector('.fa-download');
-let capturedData = '';
 
-function mousehandler(event){
-
-    capturedData += generateRandomNos(event);
-}
-
-// Function to generate random numbers
-function generateRandomNos(e){
-
-    const xcoord = event.clientX;
-    const ycoord = event.clientY;
-
-    return parseInt(xcoord) + parseInt(ycoord);
-}
-
-// Function to save the incoming numbers to a file and download it
-function saveToFile(data, filename){
-
-    // console.log("clicked!")
-    const blob = new Blob([data], { type: 'text/plain' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    window.URL.revokeObjectURL(url);
-    document.body.removeChild(a);
+// Function to display/hide start/stop btns
+function loadContent(){
+    stop.style.display = 'none';
+    start.style.display = 'flex';
 }
 
 // Function to program the start btn
-function startbtnfn(e){
-
-    start.style.display='none';
-    stop.style.display='flex';
-
-    document.addEventListener('mousemove', mousehandler);
+function startBtnFn(){
+    stop.style.display = 'flex';
+    start.style.display = 'none';
+    console.log("Message sent from popup");
+    chrome.runtime.sendMessage({ action: 'startRecording', type: 'cursor' });
 }
 
+
 // Function to program the stop btn
-function stopbtnfn(){
-
-    start.style.display='flex';
-    stop.style.display='none';
-
-    document.removeEventListener('mousemove', mousehandler);
+function stopBtnFn(){
+    stop.style.display = 'none';
+    start.style.display = 'flex';
+    chrome.runtime.sendMessage({ action: 'stopRecording' });
 }
 
 // Function to program the download btn
-
-function loadContent(){
-    start.style.display='flex';
-    stop.style.display='none';
-}
-
 function downloadFiles(){
-
-    if(capturedData.trim() !== '')
-        saveToFile(capturedData, 'RandomNumbers.txt');
-    else{
-        alert("Kindly start the extension to generate numbers");
-        return;
-    }
+    chrome.runtime.sendMessage({ action: 'downloadData' });
 }
-
 
 document.addEventListener('DOMContentLoaded', loadContent);
-
-start.addEventListener('click', startbtnfn);
-stop.addEventListener('click', stopbtnfn);
+start.addEventListener('click', startBtnFn);
+stop.addEventListener('click', stopBtnFn);
 downloadbtn.addEventListener('click', downloadFiles);
