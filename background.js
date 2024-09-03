@@ -1,6 +1,7 @@
 // background.js
 let recording = false;
 let data = [];
+let activeTabId = null;
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   console.log('Message received in background.js:', request);
@@ -24,7 +25,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
 async function startRecording() {
   const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-  const activeTabId = tabs[0].id;
+  activeTabId = tabs[0].id;
+  console.log('Tabs start:', tabs);
+
+  if (tabs.length === 0) {
+    console.error('No active tabs found in start.');
+    return;
+  }
   try {
       // Inject content script if not already injected
       await chrome.scripting.executeScript({
@@ -40,25 +47,27 @@ async function startRecording() {
 }
 
 async function stopRecording() {
-  const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-  const activeTabId = tabs[0].id;
-  chrome.tabs.sendMessage(activeTabId, { action: 'stop' });
+  try {
+    chrome.tabs.sendMessage(activeTabId, { action: 'stop' });
+  } catch (e) {
+    console.error("Failed to send stop message", e);
+  }
 }
 
 function downloadData() {
   // Check if data is not empty before proceeding
   if (data.length === 0) {
       console.error("No data recorded.");
-      return; // Exit if there is no data
+      return;
   }
 
   // Convert data to CSV format
-  let csvContent = "x,y\n";  // Add headers for the CSV file
+  let csvContent = "x,y\n";
   data.forEach(point => {
-      csvContent += `${point.x},${point.y}\n`;  // Convert each point to a CSV row
+      csvContent += `${point.x},${point.y}\n`;
   });
 
-  console.log("CSV Content:", csvContent);  // Debug: Print CSV content to console
+  console.log("CSV Content:", csvContent);
 
   // Create a Blob object from the CSV content
   const blob = new Blob([csvContent], { type: 'text/csv' });
@@ -66,17 +75,17 @@ function downloadData() {
   // Use FileReader to read the Blob data and initiate download
   const reader = new FileReader();
   reader.onload = function(event) {
-      const url = event.target.result;  // This will be the base64 data URL
+      const url = event.target.result;
 
       // Trigger the download using the base64 URL
       chrome.downloads.download({
           url: url,
-          filename: 'MouseData.csv',  // Set the desired filename for the CSV
+          filename: 'RandomNumbers.csv',
           saveAs: true
       }, function() {
           console.log("Download initiated.");
-          data = [];  // Clear data after download is initiated
+          data = [];
       });
   };
-  reader.readAsDataURL(blob);  // This will read the blob as a data URL
+  reader.readAsDataURL(blob);
 }
