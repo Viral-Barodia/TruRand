@@ -10,23 +10,22 @@ function sendCursorCoordinates(event) {
 }
 
 function startRecording() {
-    console.log('Start recording');
     recording = true;
     document.addEventListener('mousemove', sendCursorCoordinates);
 }
 
 function stopRecording() {
-    console.log('Stop recording');
     recording = false;
     document.removeEventListener('mousemove', sendCursorCoordinates);
 }
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    console.log('Message received in content.js:', request);
-
     if (request.action === 'start') {
         startRecording();
+        sendResponse({ status: 'Recording started' });
     } else if (request.action === 'stop') {
+        console.log('Stop command received in content script');
         stopRecording();
+        sendResponse({ status: 'Recording stopped' });
     }
 });

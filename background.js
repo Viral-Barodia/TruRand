@@ -3,30 +3,36 @@ let recording = false;
 let data = [];
 let activeTabId = null;
 
+/**
+ * Function that receives the messages from the popup and executes appropriate functions
+ */
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  console.log('Message received in background.js:', request);
 
   if (request.action === 'startRecording') {
-      console.log('Start Recording action received.');
       recording=true;
       startRecording();
-  } else if (request.action === 'stopRecording') {
-      console.log('Stop Recording action received.');
-      recording=false;
-      downloadData();
+      sendResponse({ recording: recording });
+    } else if (request.action === 'stopRecording') {
       stopRecording();
+      recording=false;
+      sendResponse({ recording: recording });
+      downloadData();
+  } else if (request.action === 'checkStatus') {
+      sendResponse({ recording: recording });
   } else if (recording && request.x !== undefined && request.y !== undefined) {
-      console.log(`Cursor data received: x=${request.x}, y=${request.y}`);
       data.push({ x: request.x, y: request.y });
   } else {
       sendResponse({ status: 'Unknown action' });
   }
 });
 
+/**
+ * Function to start recording co-ordinates by sending message to the content script
+ * @returns void
+ */
 async function startRecording() {
   const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-  activeTabId = tabs[0].id;
-  console.log('Tabs start:', tabs);
+  activeTabId = tabs[0]?.id;
 
   if (tabs.length === 0) {
     console.error('No active tabs found in start.');
@@ -40,20 +46,41 @@ async function startRecording() {
       });
       // Send a message to content script
       chrome.tabs.sendMessage(activeTabId, { action: 'start' });
-      console.log('Content script injected and message sent.');
   } catch (error) {
       console.error('Failed to inject content script:', error);
   }
 }
 
+/**
+ * Function to stop the recording by sending a message to the content script
+ */
 async function stopRecording() {
   try {
-    chrome.tabs.sendMessage(activeTabId, { action: 'stop' });
+    if (activeTabId) {
+      const tab = await chrome.tabs.get(activeTabId);
+      if(tab) {
+        chrome.tabs.sendMessage(activeTabId, { action: 'stop' }, response => {
+          if (chrome.runtime.lastError) {
+              console.error(`Error sending stop message: ${chrome.runtime.lastError.message}`);
+          } else {
+              console.log('Stop message sent successfully');
+          }
+        });
+      } else {
+        console.error("No active tab found");
+      }
+    } else {
+      console.error('Active tab ID is not set.');
+    }
   } catch (e) {
     console.error("Failed to send stop message", e);
   }
 }
 
+/**
+ * Function to download a CSV containing the data
+ * @returns void
+ */
 function downloadData() {
   // Check if data is not empty before proceeding
   if (data.length === 0) {
@@ -66,8 +93,6 @@ function downloadData() {
   data.forEach(point => {
       csvContent += `${point.x},${point.y}\n`;
   });
-
-  console.log("CSV Content:", csvContent);
 
   // Create a Blob object from the CSV content
   const blob = new Blob([csvContent], { type: 'text/csv' });
@@ -83,8 +108,8 @@ function downloadData() {
           filename: 'RandomNumbers.csv',
           saveAs: true
       }, function() {
-          console.log("Download initiated.");
           data = [];
+          recording=false;
       });
   };
   reader.readAsDataURL(blob);

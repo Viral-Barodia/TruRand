@@ -1,24 +1,37 @@
-const start = document.querySelector('.fa-g');
-const downloadbtn = document.querySelector('.fa-file-arrow-down');
+const start = document.querySelector('.start-btn');
+const downloadbtn = document.querySelector('.download-btn');
 
 // Function to display/hide start/stop btns
 function loadContent(){
-    downloadbtn.style.display = 'none';
-    start.style.display = 'flex';
+    chrome.runtime.sendMessage({ action: 'checkStatus' }, (response) => {
+        if (response.recording) {
+            downloadbtn.style.display = 'flex';
+            start.style.display = 'none';
+        } else {
+            downloadbtn.style.display = 'none';
+            start.style.display = 'flex';
+        }
+    });
 }
 
 // Function to program the start btn
 function startBtnFn(){
-    downloadbtn.style.display = 'flex';
-    start.style.display = 'none';
-    chrome.runtime.sendMessage({ action: 'startRecording' });
+    chrome.runtime.sendMessage({ action: 'startRecording' }, (response) => {
+        if (response.recording) {
+            downloadbtn.style.display = 'flex';
+            start.style.display = 'none';
+        }
+    });
 }
-
 
 // Function to program the stop btn
 function stopBtnFn(){
-    start.style.display = 'flex';
-    chrome.runtime.sendMessage({ action: 'stopRecording' });
+    chrome.runtime.sendMessage({ action: 'stopRecording' }, (response) => {
+        if (!response.recording) {
+            downloadbtn.style.display = 'none';
+            start.style.display = 'flex';
+        }
+    });
 }
 
 document.addEventListener('DOMContentLoaded', loadContent);
