@@ -2,6 +2,7 @@
 let recording = false;
 let data = [];
 let activeTabId = null;
+let oddNumbers = false;
 
 /**
  * Function that receives the messages from the popup and executes appropriate functions
@@ -9,15 +10,26 @@ let activeTabId = null;
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
   if (request.action === 'startRecording') {
-      recording=true;
-      startRecording();
-      sendResponse({ recording: recording });
-    } else if (request.action === 'stopRecording') {
-      stopRecording();
-      recording=false;
-      sendResponse({ recording: recording });
-      downloadData();
-  } else if (request.action === 'checkStatus') {
+    let maxCount = (request.maxCount !== undefined && request.maxCount !== null) ? request.maxCount : Infinity;
+    if(maxCount%2) {
+      maxCount++;
+      oddNumbers=true;
+    }
+    recording=true;
+    startRecording(maxCount);
+    sendResponse({ recording: recording });
+  } else if (request.action === 'stopRecording') { // recording stopped manually by the user
+    console.log(`stopped already`);
+    recording=false;
+    sendResponse({ recording: recording });
+    downloadData();
+    stopRecording();
+  } else if(request.action === 'recordingStopped') { // recording stopped programatically by content.js because limit reached
+    recording=false;
+    sendResponse({ recording: recording });
+    downloadData();  
+    stopRecording();
+  }else if (request.action === 'checkStatus') {
       sendResponse({ recording: recording });
   } else if (recording && request.x !== undefined && request.y !== undefined) {
       data.push({ x: request.x, y: request.y });
@@ -30,11 +42,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
  * Function to start recording co-ordinates by sending message to the content script
  * @returns void
  */
-async function startRecording() {
+async function startRecording(maxCount) {
   const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
   activeTabId = tabs[0]?.id;
 
   if (tabs.length === 0) {
+    console.log(`maxCount: `, maxCount);
     console.error('No active tabs found in start.');
     return;
   }
@@ -45,7 +58,15 @@ async function startRecording() {
           files: ['content.js']
       });
       // Send a message to content script
-      chrome.tabs.sendMessage(activeTabId, { action: 'start' });
+      console.log('maxCount being sent to the content.js: ', maxCount);
+      chrome.tabs.sendMessage(activeTabId, { action: 'start', maxCount: maxCount === Infinity ? -1 : maxCount }, (response) => {
+        if (chrome.runtime.lastError) {
+            console.error(`Error sending message: ${chrome.runtime.lastError.message}`);
+        } else {
+            console.log('Message sent to content.js successfully', response);
+        }
+    });
+    
   } catch (error) {
       console.error('Failed to inject content script:', error);
   }
@@ -84,15 +105,26 @@ async function stopRecording() {
 function downloadData() {
   // Check if data is not empty before proceeding
   if (data.length === 0) {
-      console.error("No data recorded.");
-      return;
+    console.error("No data recorded.");
+    return;
   }
 
   // Convert data to CSV format
-  let csvContent = "x,y\n";
-  data.forEach(point => {
-      csvContent += `${point.x},${point.y}\n`;
-  });
+  let csvContent = "";
+  let adjustedLength = (oddNumbers) ? (data.length-1) : data.length;
+  console.log(`adjusted length is: `, adjustedLength);
+  // Add the adjusted data to the CSV
+  for (let i = 0; i < adjustedLength; i++) {
+    const point = data[i];
+    csvContent += `${point.x},${point.y}\n`;
+    if(i==adjustedLength-1) {
+      if(oddNumbers) {
+        csvContent += `${point.x}\n`;
+      } else {
+        csvContent += `${point.x},${point.y}\n`;
+      }
+    }
+  }
 
   // Create a Blob object from the CSV content
   const blob = new Blob([csvContent], { type: 'text/csv' });

@@ -1,5 +1,6 @@
 const start = document.querySelector('.start-btn');
 const downloadbtn = document.querySelector('.download-btn');
+const userEnteredMaxCount = document.getElementById('max-count-input');
 
 // Function to display/hide start/stop btns
 function loadContent(){
@@ -16,7 +17,10 @@ function loadContent(){
 
 // Function to program the start btn
 function startBtnFn(){
-    chrome.runtime.sendMessage({ action: 'startRecording' }, (response) => {
+    console.log(`start btn clicked`);
+    const maxCount = userEnteredMaxCount.value ? parseInt(userEnteredMaxCount.value) : Infinity;
+    console.log(`Inside popup.js`, maxCount);
+    chrome.runtime.sendMessage({ action: 'startRecording', maxCount: maxCount }, (response) => {
         if (response.recording) {
             downloadbtn.style.display = 'flex';
             start.style.display = 'none';
