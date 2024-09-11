@@ -3,6 +3,11 @@
   "description": "An extension which helps you to self-generate true random numbers (TRNGs) using the coordinates of your mouse cursor on the screen",
   "version": "1.0",
   "manifest_version": 3,
+  "icons": {
+    "16": "icon_16.png",
+    "48": "icon_48.png",
+    "128": "icon_128.png"
+  },
   "permissions": [
     "activeTab",
     "downloads",
