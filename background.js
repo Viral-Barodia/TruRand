@@ -24,13 +24,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   } else if (request.action === 'stopRecording') { // recording stopped manually by the user
     recording=false;
     sendResponse({ recording: recording });
-    downloadData();
     stopRecording();
+    downloadData();
   } else if(request.action === 'recordingStopped') { // recording stopped programatically by content.js because limit reached
     recording=false;
     sendResponse({ recording: recording });
-    downloadData();  
     stopRecording();
+    downloadData();
   }else if (request.action === 'checkStatus') {
       sendResponse({ recording: recording });
   } else if (recording && request.x !== undefined && request.y !== undefined) {
@@ -104,14 +104,14 @@ async function stopRecording() {
  */
 function downloadData() {
   // Check if data is not empty before proceeding
-  if (data.length === 0) {
+  let adjustedLength = (oddNumbers) ? (data.length-1) : data.length;
+  if (adjustedLength<=0 || data.length === 0) {
     console.error("No data recorded.");
     return;
   }
 
   // Convert data to CSV format
   let csvContent = "";
-  let adjustedLength = (oddNumbers) ? (data.length-1) : data.length;
   // Add the adjusted data to the CSV
   for (let i = 0; i < adjustedLength; i++) {
     const point = data[i];
