@@ -1,0 +1,55 @@
+diehard_birthdays checks for collisions of numbers. It tests how often numbers are repeating
+#=============================================================================#
+#            dieharder version 3.31.1 Copyright 2003 Robert G. Brown          #
+#=============================================================================#
+   rng_name    |           filename             |rands/second|
+        mt19937|/mnt/d/Personal_Projects/Projects/TruRand/RandomNumbers.csv|  1.32e+08  |
+#=============================================================================#
+        test_name   |ntup| tsamples |psamples|  p-value |Assessment
+#=============================================================================#
+   diehard_birthdays|   0|       100|     100|0.26435653|  PASSED  
+#=============================================================================#
+
+diehard_operm5 test evaluates the randomness of a sequence by analyzing overlapping 5-permutations of consecutive elements and checking how often each possible permutation occurs, comparing it to the expected distribution for a truly random sequence.
+#            dieharder version 3.31.1 Copyright 2003 Robert G. Brown          #
+#=============================================================================#
+   rng_name    |           filename             |rands/second|
+        mt19937|/mnt/d/Personal_Projects/Projects/TruRand/RandomNumbers.csv|  1.42e+08  |
+#=============================================================================#
+        test_name   |ntup| tsamples |psamples|  p-value |Assessment
+#=============================================================================#
+      diehard_operm5|   0|   1000000|     100|0.92125283|  PASSED  
+#=============================================================================#
+
+diehard_rank_32x32 test assesses the randomness of a sequence by constructing 32x32 binary matrices from the numbers and calculating their ranks, then comparing the distribution of these ranks to the expected distribution for random matrices, checking if the sequence behaves as a truly random source.
+Rank of a matrix is the maximum number of linearly independent rows or columns
+#            dieharder version 3.31.1 Copyright 2003 Robert G. Brown          #
+#=============================================================================#
+   rng_name    |           filename             |rands/second|
+        mt19937|/mnt/d/Personal_Projects/Projects/TruRand/RandomNumbers.csv|  1.49e+08  |
+#=============================================================================#
+        test_name   |ntup| tsamples |psamples|  p-value |Assessment
+#=============================================================================#
+  diehard_rank_32x32|   0|     40000|     100|0.51763580|  PASSED  
+#=============================================================================#
+
+diehard_rank_6x8 is the same as diehard_rank_32x32, just the matrices have different number of rows and columns
+#            dieharder version 3.31.1 Copyright 2003 Robert G. Brown          #
+#=============================================================================#
+   rng_name    |           filename             |rands/second|
+        mt19937|/mnt/d/Personal_Projects/Projects/TruRand/RandomNumbers.csv|  1.56e+08  |
+#=============================================================================#
+        test_name   |ntup| tsamples |psamples|  p-value |Assessment
+#=============================================================================#
+    diehard_rank_6x8|   0|    100000|     100|0.69184145|  PASSED  
+#=============================================================================#
+
+diehard_bitstream evaluates for randomness by considering the bits as a continuos stream of numbers. It then checks how often bit patterns appear and compares it with what it would expect from a truly random bitstream.
+#            dieharder version 3.31.1 Copyright 2003 Robert G. Brown          #
+#=============================================================================#
+   rng_name    |           filename             |rands/second|
+        mt19937|/mnt/d/Personal_Projects/Projects/TruRand/RandomNumbers.csv|  1.53e+08  |
+#=============================================================================#
+        test_name   |ntup| tsamples |psamples|  p-value |Assessment
+#=============================================================================#
+   diehard_bitstream|   0|   2097152|     100|0.93320774|  PASSED  
