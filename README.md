@@ -1,16 +1,10 @@
-1. Chrome.tabs API
-https://developer.chrome.com/docs/extensions/reference/api/tabs?authuser=1
+## Problem Statement
 
-2. Pointer Lock API
-https://developer.mozilla.org/en-US/docs/Web/API/Pointer_Lock_API
+Mathematicians and computer scientists often grapple with the challenge of generating truly random numbers. Most built-in functions, like `Math.random()` in JavaScript, produce **pseudo-random numbers (PRNs)** with uniform distribution [[source](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random)], and Python's `randint()` function is also a PRN generator.
 
-3. Active tab permission
-https://developer.chrome.com/docs/extensions/develop/concepts/activeTab?authuser=1
+However, PRNs are not truly random, and for certain applications, this limitation can be problematic.
 
-4. Scripting permission
+### Enter **TruRand**:  
+Human interactions with machines are inherently random. Whether it’s the unpredictable movements of a mouse cursor, the varied speed and frequency of key presses, or even eye movements across a screen—these interactions form our "digital fingerprints," which are unique for users and `truly` random.
 
-
-13th March 23:47
--Right now only generates random numbers while the cursor is inside the popup window
--Should generate numbers outside the popup, accross tabs
--Should take an input number from the user, where the user might want to stop generating and not think about manually stopping the ext
+**TruRand** leverages this randomness by tracking users' mouse cursor movements and recording the X and Y coordinates to generate **true random numbers**.
