@@ -1,22 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" integrity="sha512-1sCRPdkRXhBV2PBLUdRb4tMg1w2YPf37qatUFeS7zlBy7jJI8Lf4VHwWfZZfpXtYSLy85pkm9GaYVYMfw5BC1A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-        <link rel="stylesheet" href="style.css">
-        <title>TruRand</title>
-    </head>
-    <body>
-        <h3 class="heading">Your Own True Random Numbers!</h3>
-        <label class="input-label">Count of Numbers: </label>
-        <input type="number" id="max-count-input" min="1"max="50000" placeholder="Enter a positive number"/>
-        <span id="error-message" style="color:red; display:none;">Please enter a positive number!</span>
-        <div class="icons">
-            <i class="fa fa-play-circle start-btn"></i>
-            <i class="fa-solid fa-file-arrow-down download-btn"></i>
-        </div>
-        <script src="popup.js"></script>
-    </body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css"
+      integrity="sha512-1sCRPdkRXhBV2PBLUdRb4tMg1w2YPf37qatUFeS7zlBy7jJI8Lf4VHwWfZZfpXtYSLy85pkm9GaYVYMfw5BC1A=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <title>TruRand</title>
+  </head>
+  <body>
+    <h3 class="heading">Your Own True Random Numbers!</h3>
+    <label class="input-label">Count of Numbers: </label>
+    <input
+      type="number"
+      id="min-value-input"
+      placeholder="Enter minimum value"
+    />
+    <input
+      type="number"
+      id="max-value-input"
+      placeholder="Enter maximum value"
+    />
+    <input
+      type="number"
+      id="max-count-input"
+      min="1"
+      max="50000"
+      placeholder="Enter a positive number"
+    />
+    <span id="error-message" style="color: red; display: none"
+      >Please enter a positive number!</span
+    >
+    <div class="icons">
+      <i class="fa fa-play-circle start-btn"></i>
+      <i class="fa-solid fa-file-arrow-down download-btn"></i>
+    </div>
+    <script src="popup.js"></script>
+  </body>
 </html>
